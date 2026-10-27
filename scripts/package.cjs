@@ -8,6 +8,8 @@ async function main() {
   if (process.platform !== 'win32' || process.arch !== 'x64') throw new Error('This package target requires Windows x64.');
   try { await fs.access(output); throw new Error(`Output already exists: ${output}. Preserve it or choose a new version before packaging.`); }
   catch (error) { if (error.code !== 'ENOENT') throw error; }
+  // Electron 45 downloads its runtime on demand; clean CI has no dist yet.
+  execFileSync(process.execPath, [path.join(root, 'node_modules/electron/install.js')], { stdio: 'inherit', windowsHide: true });
   await fs.cp(path.join(root, 'node_modules/electron/dist'), output, { recursive: true });
   await fs.rename(path.join(output, 'electron.exe'), path.join(output, 'ChatBubble.exe'));
   execFileSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(root, 'scripts/set-exe-icon.ps1'), '-Exe', path.join(output, 'ChatBubble.exe'), '-Icon', path.join(root, 'src/assets/app.ico')], { stdio: 'inherit', windowsHide: true });
