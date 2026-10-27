@@ -1,0 +1,39 @@
+:root{font:14px/1.8 "Segoe UI","Microsoft YaHei",sans-serif;color-scheme:light dark;--ink:light-dark(#29323b,#e9eff8);--muted:light-dark(#858d96,#99a5b7)}
+*{box-sizing:border-box}
+html,body,#cb-pet-inline,#cb-desktop{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+[hidden]{display:none!important}button,textarea{font:inherit}button{border:0;cursor:pointer}button:focus-visible{outline:1px solid #74949a;outline-offset:3px}
+#cb-pet-inline{position:relative;color:var(--ink);isolation:isolate;user-select:none}
+#cb-desktop{position:absolute;inset:0;touch-action:none}
+#cb-scene{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.cb-material{filter:drop-shadow(0 4px 5px light-dark(#12121c16,#0003))}
+#cb-body{fill:url(#cb-skin);stroke:light-dark(#40414928,#b3bacf50);stroke-width:2.5;stroke-linejoin:round}
+#cb-rim{fill:none;stroke:url(#cb-shine);stroke-width:1.5}
+#cb-pet{position:absolute;left:0;top:0;margin:0;background:transparent;padding:0;touch-action:none;cursor:grab;border-radius:45%;z-index:3;will-change:transform}
+#cb-pet:active{cursor:grabbing}
+#cb-pet[data-pointer-focus=true]{outline:none}
+#composer{position:absolute;display:flex;align-items:center;gap:7px;padding:6px 8px 6px 14px;background:transparent;z-index:5;touch-action:auto;will-change:opacity}
+#input{height:24px;min-height:24px;max-height:24px;line-height:24px;min-width:0;flex:1;margin:0;padding:0;border:0;resize:none;outline:0;background:transparent;color:var(--ink);box-shadow:none;font-size:13px;user-select:text;scrollbar-width:none;overflow:auto}
+#input::-webkit-scrollbar{display:none;width:0;height:0}
+#input::placeholder{color:var(--muted)}
+#send{flex-shrink:0;width:28px;height:28px;padding:0;border-radius:50%;background:transparent;color:var(--cb-send-ink,#fff);display:grid;place-items:center}
+#send svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#send:disabled{opacity:.5!important}
+#capture{position:relative;display:flex;align-items:center;justify-content:center;flex:none;width:24px;height:28px;padding:0;border-radius:14px;background:transparent;color:var(--ink)}
+#capture svg,#capture-menu svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#capture[data-state=ready]{background:light-dark(#dbdde1,#4a4d54)}
+#capture:disabled{opacity:.45;cursor:default}
+.capture-dot{position:absolute;right:2px;top:3px;width:4px;height:4px;border-radius:50%;background:currentColor}
+#capture-menu{position:absolute;z-index:8;right:16px;bottom:calc(100% + 8px);display:flex;gap:4px;width:78px;padding:4px;background:light-dark(#f3f4f6,#292c32);border:1px solid light-dark(#d3d5da,#575b64);border-radius:21px;box-shadow:0 3px 10px #0002;color:var(--ink)}
+#capture-menu button{display:flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;padding:0;border-radius:50%;background:transparent;color:inherit}
+#capture-menu button:hover{background:light-dark(#e8e9ed,#3b3f47)}
+#send.stop svg{display:none}#send.stop::after{content:'';width:10px;height:10px;background:var(--cb-send-ink,#fff);border-radius:1px}
+#chat{position:absolute;z-index:4;background:transparent;touch-action:auto;user-select:text}
+#messages{display:flex;flex-direction:column;gap:16px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;line-height:1.85;font-size:var(--message-size,14px)}
+.message{margin:0;max-width:94%;width:fit-content;overflow-wrap:anywhere;white-space:normal}
+.message.user{align-self:flex-end;color:light-dark(#315d65,#a4d2d8);max-width:88%;white-space:pre-wrap}
+.message>div{white-space:pre-wrap}.message a{color:inherit;text-decoration:underline}.message pre{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;font-size:.9em}.message ul,.message ol{padding-left:22px;margin:4px 0}
+.message-state{display:block;opacity:.7;font-size:11px;margin-top:6px}.paragraph-gap{height:8px}
+.text-shadow .message{text-shadow:0 1px 3px #8888}
+.message,.message.user{color:var(--message-color,#000)}
+#retry{background:transparent;color:var(--muted);padding:4px 0;font-size:12px}
+#status{margin:4px 0;font-size:12px;color:light-dark(#846048,#e4c49f);line-height:1.5;overflow-wrap:anywhere}

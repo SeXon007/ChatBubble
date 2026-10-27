@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Bubble 设置</title><link rel="stylesheet" href="settings.css"></head>
+<body><main id="settings-shell">
+<nav class="settings-tabs" role="tablist" aria-label="设置分类">
+  <button type="button" id="tab-connection" role="tab" aria-selected="true" aria-controls="connection">连接</button>
+  <button type="button" id="tab-chat-options" role="tab" aria-selected="false" aria-controls="chat-options" tabindex="-1">聊天</button>
+  <button type="button" id="tab-appearance" role="tab" aria-selected="false" aria-controls="appearance" tabindex="-1">外观</button>
+  <button type="button" id="tab-pet-options" role="tab" aria-selected="false" aria-controls="pet-options" tabindex="-1">桌宠</button>
+  <button type="button" id="tab-version" role="tab" aria-selected="false" aria-controls="version" tabindex="-1">版本</button>
+</nav>
+<form id="settings" novalidate>
+<section class="fields" id="connection" role="tabpanel" aria-labelledby="tab-connection">
+  <div class="row"><label for="provider">连接方式</label><select id="provider" data-edit><option value="codex-cli">Codex CLI</option><option value="api">API 服务</option></select></div>
+  <div class="row" id="api-service-row" hidden><label for="api-service">服务商</label><select id="api-service" data-edit><option value="custom">自定义</option></select></div>
+  <div class="row" id="program-row"><label for="cliPath">程序路径</label><div class="combo"><input id="cliPath" spellcheck="false" data-field="cliPath" data-edit><button type="button" id="pick-cli" data-edit>选择</button></div></div>
+  <div class="row" id="url-row" hidden><label for="baseUrl">服务地址</label><input id="baseUrl" placeholder="https://…/v1" spellcheck="false" data-field="baseUrl" data-edit></div>
+  <div class="row" id="key-row" hidden><label for="key">API Key</label><div class="combo"><input id="key" type="password" autocomplete="off" placeholder="未设置" data-edit><button type="button" id="clear-key" data-edit hidden>清除</button></div></div>
+  <div class="row" id="model-row"><label for="cli-model-choice">模型</label><select id="cli-model-choice" data-edit><option value="">CLI 默认</option><option value="__custom__">手动填写…</option></select></div>
+  <div class="row" id="custom-model-row" hidden><label for="cliModel" id="cli-model-label">模型名称</label><input id="cliModel" placeholder="CLI 默认" autocomplete="off" data-field="cliModel" data-edit></div>
+  <div class="row" id="api-model-choice-row" hidden><label for="api-model-choice">模型</label><div class="combo"><select id="api-model-choice" data-edit><option value="">选择模型</option><option value="__custom__">手动填写…</option></select><button type="button" id="api-model-refresh" data-edit title="读取当前服务的模型列表">刷新</button></div></div>
+  <div class="row" id="api-model-row" hidden><label for="model">模型名称</label><input id="model" autocomplete="off" data-field="model" data-edit></div>
+  <div class="row" id="effort-row"><label for="reasoningEffort">推理强度</label><select id="reasoningEffort" data-field="reasoningEffort" data-edit><option value="">模型默认</option></select></div>
+  <div class="row" id="api-effort-row" hidden><label for="apiReasoningEffort">思考强度</label><select id="apiReasoningEffort" data-field="apiReasoningEffort" data-edit><option value="">模型默认</option></select></div>
+</section>
+<section class="fields" id="chat-options" role="tabpanel" aria-labelledby="tab-chat-options" hidden>
+  <div class="row"><label for="captureScope">截图范围</label><select id="captureScope" data-field="captureScope" data-edit><option value="window">前台窗口</option><option value="screen">整个屏幕</option></select></div>
+  <div class="row"><label for="storage-directory">存储位置</label><div class="combo"><input id="storage-directory" readonly aria-label="存储位置，双击打开文件夹"><button type="button" id="choose-storage" data-edit>选择</button></div></div>
+  <div class="row"><label for="history">历史对话</label><button type="button" id="history" class="history-button">查看</button></div>
+</section>
+<section class="fields" id="appearance" role="tabpanel" aria-labelledby="tab-appearance" hidden>
+    <div class="row"><label for="fontSize">聊天字号</label><select id="fontSize" data-field="fontSize" data-edit><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option></select></div>
+    <div class="row"><label for="textColor">字体颜色</label><input id="textColor" type="color" value="#000000" data-field="textColor" data-edit aria-label="选择聊天字体颜色"></div>
+    <div class="row"><label for="textShadow">文字投影</label><div class="check"><input id="textShadow" type="checkbox" data-field="textShadow" data-edit></div></div>
+</section>
+<section class="fields" id="pet-options" role="tabpanel" aria-labelledby="tab-pet-options" hidden>
+    <div class="row"><label for="petColor">颜色</label><input id="petColor" type="color" data-field="petColor" data-edit></div>
+    <div class="row"><label for="petSize">身体大小</label><div class="range"><input id="petSize" type="range" min="60" max="100" step="2" data-field="petSize" data-edit><output data-value="petSize" data-unit="%"></output></div></div>
+    <div class="row"><label for="petEyeSize">眼睛大小</label><div class="range"><input id="petEyeSize" type="range" min="70" max="140" step="2" data-field="petEyeSize" data-edit><output data-value="petEyeSize" data-unit="%"></output></div></div>
+    <div class="row"><label for="petGaze">眼睛跟随</label><div class="range"><input id="petGaze" type="range" min="12" max="32" step="1" data-field="petGaze" data-edit><output data-value="petGaze" data-unit="px"></output></div></div>
+    <div class="row"><label for="petLife">灵动幅度</label><div class="range"><input id="petLife" type="range" min="0.5" max="1.8" step="0.05" data-field="petLife" data-edit><output data-value="petLife"></output></div></div>
+    <div class="row"><label for="petWidth">输入框长度</label><div class="range"><input id="petWidth" type="range" min="200" max="320" step="8" data-field="petWidth" data-edit><output data-value="petWidth" data-unit="px"></output></div></div>
+    <div class="row"><label for="petViscosity">贴边黏稠感</label><div class="range"><input id="petViscosity" type="range" min="0.35" max="1" step="0.05" data-field="petViscosity" data-edit><output data-value="petViscosity"></output></div></div>
+    <div class="row"><label for="petDistance">贴边范围</label><div class="range"><input id="petDistance" type="range" min="20" max="100" step="2" data-field="petDistance" data-edit><output data-value="petDistance" data-unit="px"></output></div></div>
+    <div class="row"><label for="petEnabled">松手吸附</label><div class="check"><input id="petEnabled" type="checkbox" data-field="petEnabled" data-edit></div></div>
+    <div class="row"><label for="petMotion">弹性</label><select id="petMotion" data-field="petMotion" data-edit><option value="lively">活泼</option><option value="crisp">轻快</option><option value="sticky">黏糯</option></select></div>
+</section>
+<section class="fields" id="version" role="tabpanel" aria-labelledby="tab-version" hidden>
+  <div class="row"><label>当前版本</label><span id="current-version" class="version-number">读取中…</span></div>
+  <div class="row"><label for="check-update">检查更新</label><button type="button" id="check-update">检查更新</button></div>
+  <div class="row"><label for="open-update">软件更新</label><button type="button" id="open-update" disabled>更新</button></div>
+</section>
+<footer><button type="button" id="check" data-edit title="发送一条测试消息，会使用当前账户额度">检查连接</button><span id="result" role="status" aria-live="polite"></span></footer>
+</form></main>
+<dialog id="history-dialog" aria-labelledby="history-title">
+  <header><h2 id="history-title">历史对话</h2><button type="button" id="close-history" aria-label="关闭历史对话">关闭</button></header>
+  <button type="button" id="open-codex" class="native-history" hidden>在 Codex 中查看当前对话</button>
+  <p id="codex-history-notice" role="status" hidden></p>
+  <button type="button" id="open-client" class="native-history" hidden></button>
+  <p id="client-history-notice" role="status" hidden></p>
+  <select id="archive-list" aria-label="选择历史对话"><option value="">选择一段对话…</option></select>
+  <p id="archive-status" role="status"></p>
+  <section id="archive-preview" hidden><h3 id="archive-title"></h3><div id="archive-messages"></div></section>
+  <div class="dialog-actions"><button type="button" id="open-archives">打开文件夹</button><button type="button" id="refresh-archives">刷新</button><button type="button" id="restore-archive" disabled>恢复</button></div>
+</dialog>
+<script src="settings.js"></script></body></html>

@@ -1,0 +1,25 @@
+{
+  "name": "chat-bubble",
+  "version": "0.14.0",
+  "private": true,
+  "description": "Windows transparent desktop chat shell",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc && node scripts/copy-assets.cjs",
+    "start": "npm run build && electron .",
+    "test": "npm run build && node --test tests/*.test.cjs",
+    "smoke": "npm run build && electron . --smoke-test",
+    "package": "npm run build && node scripts/package.cjs",
+    "test:restart": "npm run build && node scripts/restart-smoke.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SeXon007/ChatBubble.git"
+  }
+}

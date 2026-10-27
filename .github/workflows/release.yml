@@ -1,0 +1,44 @@
+name: Windows release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Validate release tag
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag/version mismatch' }
+      - run: npm run package
+      - name: Create clean portable ZIP and checksum
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          ./scripts/release-zip.ps1 -Version $version
+      - name: Retain build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-portable
+          path: |
+            release/*.zip
+            release/SHA256SUMS.txt
+      - name: Create draft release for review
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          gh release create "v$version" "release/ChatBubble-$version-win32-x64.zip" release/SHA256SUMS.txt --draft --title "ChatBubble $version" --notes-file RELEASE_NOTES.md --verify-tag

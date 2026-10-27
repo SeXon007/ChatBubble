@@ -1,0 +1,47 @@
+:root{color-scheme:light dark;--paper:light-dark(#fff,#252725);--ink:light-dark(#292c29,#e5e7e5);--muted:light-dark(#737873,#a1a6a1);--line:light-dark(#e6e8e6,#3d413d);--field:light-dark(#fff,#2b2e2b);--fill:light-dark(#f6f7f6,#303330);--error:light-dark(#a63333,#ffa3a3);font:clamp(13px,calc(9px + .95vw),20px)/1.5 "Segoe UI","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper)}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+#settings-shell{width:100%;max-width:72rem;margin:0 auto;border-radius:18px;overflow:clip}
+.settings-tabs{position:sticky;top:0;z-index:1;background:var(--paper);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:.46rem 1.23rem 0;border-bottom:1px solid var(--line)}
+.settings-tabs [role=tab]{position:relative;min-width:0;height:3.3rem;padding:0 4px;border:0;border-radius:0;background:transparent;color:var(--muted);font-size:1rem}
+.settings-tabs [role=tab][aria-selected=true]{color:var(--ink);font-weight:500}
+.settings-tabs [role=tab][aria-selected=true]::after{content:'';position:absolute;left:20%;right:20%;bottom:-1px;height:2px;background:var(--ink);border-radius:2px}
+.settings-tabs [role=tab]:hover{background:transparent;color:var(--ink)}
+.settings-tabs [role=tab]:focus-visible{outline:1px solid var(--muted);outline-offset:-5px;border-radius:5px}
+.fields{display:grid;gap:1.38rem;padding:1.54rem}
+.row{display:grid;grid-template-columns:5.23rem minmax(0,1fr);align-items:center;gap:.923rem;min-height:2.46rem}
+label{font-size:1rem}
+input,select,button{font:inherit;color:var(--ink);outline-offset:3px}
+input:not([type=checkbox]),select{width:100%;min-width:0;height:2.46rem;border:1px solid var(--line);border-radius:5px;padding:0 9px;background:var(--field)}
+input[type=checkbox]{width:15px;height:1.15rem;margin:0;accent-color:var(--ink)}
+button{min-height:2.46rem;padding:4px 11px;border:1px solid var(--line);border-radius:5px;background:var(--paper);white-space:nowrap;font-size:.923rem;cursor:pointer}
+button:hover:not(:disabled){background:var(--fill)}
+button:disabled,input:disabled,select:disabled{opacity:.5;cursor:default}
+[aria-invalid=true]{border-color:var(--error)!important}
+.combo{display:flex;align-items:center;gap:.46rem;min-width:0}
+.combo input{flex:1;min-width:0;font-size:.923rem}
+.combo select{flex:1;width:0;min-width:0}
+.check{display:flex;justify-content:flex-end;align-items:center;min-height:2.46rem}
+.history-button{width:100%;text-align:left}
+#version button{width:auto;justify-self:start}
+.version-number{font-variant-numeric:tabular-nums}
+.range{display:flex;align-items:center;gap:.615rem;min-width:0}
+.range input[type=range]{flex:1;width:0;height:2rem;padding:0;border:0;accent-color:var(--ink);background:transparent}
+.range output{min-width:42px;text-align:right;font-size:.923rem;color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=color]{padding:3px!important;max-width:5.38rem;justify-self:end}
+footer{display:flex;align-items:center;gap:.69rem;padding:.846rem 1.54rem;border-top:1px solid var(--line)}
+#result{flex:1;min-width:0;text-align:right;overflow-wrap:anywhere;font-size:.846rem;color:var(--muted)}
+#result[data-error=true]{color:var(--error)}
+dialog{width:min(340px,calc(100% - 24px));max-height:calc(100vh - 24px);padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:light-dark(#0003,#0007)}
+dialog header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+h2{margin:0;font-size:1.08rem;font-weight:500}
+h3{font-size:.923rem;font-weight:500;margin:10px 0}
+p{font-size:.923rem;color:var(--muted);margin:10px 0}
+.native-history{width:100%;margin-bottom:12px;text-align:left;white-space:normal}
+#archive-messages{max-height:190px;overflow:auto}
+#archive-messages p{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);margin:5px 0 12px}
+#archive-messages strong{font-size:.923rem;font-weight:500}
+.dialog-actions{display:flex;justify-content:flex-end;gap:.46rem;margin-top:14px}
+@media(max-width:350px){.fields{padding-left:16px;padding-right:16px}.row{grid-template-columns:60px minmax(0,1fr);gap:.69rem}footer{padding:11px 16px}}

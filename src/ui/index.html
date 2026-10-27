@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Chat Bubble</title><link rel="stylesheet" href="style.css">
+</head><body data-mode="collapsed">
+<main id="cb-pet-inline">
+<section id="cb-desktop" aria-label="史莱姆聊天入口">
+<svg id="cb-scene" viewBox="0 0 736 490" aria-hidden="true">
+<defs>
+<radialGradient id="cb-skin" cx="28%" cy="15%" r="100%"><stop id="cb-light" offset="0" stop-color="#454545"/><stop id="cb-mid" offset=".5" stop-color="#080808"/><stop id="cb-dark" offset="1" stop-color="#000"/></radialGradient>
+<linearGradient id="cb-shine" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".38"/><stop offset=".5" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#fff" stop-opacity=".12"/></linearGradient>
+</defs>
+<g class="cb-material"><path id="cb-body"/><path id="cb-rim"/></g>
+<circle id="cb-send-skin" cx="0" cy="0" r="14" opacity="0"/>
+<g id="cb-eyes" fill="#fff"><rect id="cb-eye-left"/><rect id="cb-eye-right"/></g>
+</svg>
+<button id="cb-pet" aria-label="左键点击展开聊天，拖动移动并贴边；右键单击跳跃，按住右键拖动原地拉伸，松手回弹；方向键移动，Shift 加方向键贴边"></button>
+</section>
+<section id="chat" aria-label="聊天记录" hidden>
+<div id="messages" role="log" aria-live="polite"></div>
+<p id="status" role="status" hidden></p><button id="retry" type="button" hidden>重试上一条</button>
+</section>
+<form id="composer" aria-label="消息输入框" hidden>
+<textarea id="input" rows="1" placeholder="说点什么…" aria-label="消息"></textarea>
+<button id="capture" type="button" aria-label="截取当前窗口" aria-controls="capture-menu" aria-expanded="false" title="截取当前窗口，随下一条消息发送" data-state="empty" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3M8 12h8"/></svg><span class="capture-dot" hidden></span></button>
+<button id="send" type="submit" aria-label="发送"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V4M5 11l7-7 7 7"/></svg></button>
+<div id="capture-menu" role="group" aria-label="截图操作" hidden><button id="capture-retake" type="button" aria-label="重新截图" title="重新截图"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3M8 12h8"/></svg></button><button id="capture-remove" type="button" aria-label="移除此图" title="移除此图"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6m4-6v6"/></svg></button></div>
+</form>
+</main>
+<script src="pet.js"></script><script src="renderer.js"></script>
+</body></html>
