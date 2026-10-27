@@ -2,9 +2,10 @@
 // Synthetic state only; never launch the real ChatBubble application entry.
 const { app, BrowserWindow, ipcMain, screen, nativeTheme } = require('electron');
 const fs = require('node:fs'), fsp = require('node:fs/promises'), path = require('node:path'), os = require('node:os'), vm = require('node:vm'), ts = require('typescript'), assert = require('node:assert/strict');
-const root = path.resolve(__dirname, '..'), packaged = process.argv.includes('--packaged'), version = require('../package.json').version;
-const runtime = path.join(root, packaged ? `release/ChatBubble-${version}-win32-x64/resources/app/dist` : 'dist');
-const output = path.join(root, 'docs/verification/settings-size-0.13.1'), prefix = packaged ? 'packaged-' : 'source-';
+const root = path.resolve(__dirname, '..'), packaged = process.argv.includes('--packaged');
+const version = process.env.CHATBUBBLE_SETTINGS_RUNTIME ? require(path.join(process.env.CHATBUBBLE_SETTINGS_RUNTIME, '../package.json')).version : require('../package.json').version;
+const runtime = process.env.CHATBUBBLE_SETTINGS_RUNTIME || path.join(root, packaged ? `release/ChatBubble-${version}-win32-x64/resources/app/dist` : 'dist');
+const output = process.env.CHATBUBBLE_SETTINGS_OUTPUT || path.join(root, 'docs/verification/settings-size-0.13.1'), prefix = packaged ? 'packaged-' : 'source-';
 app.setPath('userData', fs.mkdtempSync(path.join(os.tmpdir(), 'chatbubble-settings-size-')));
 app.disableHardwareAcceleration(); app.on('window-all-closed', () => {});
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
