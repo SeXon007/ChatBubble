@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
-import { mkdir, mkdtemp, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, realpath, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
@@ -123,7 +123,7 @@ const powershell = () => path.join(process.env.SystemRoot ?? 'C:\\Windows', 'Sys
 export async function prepareUpdate(options: { candidate: Candidate; zip: string; folder: string; executable: string; helper: string; shortcuts: string[] }): Promise<string> {
   const config = path.join(options.folder, 'install.json');
   await writeFile(config, JSON.stringify({ version: options.candidate.version, sha256: options.candidate.sha256, zip: options.zip,
-    oldExecutable: options.executable, oldPid: process.pid, shortcuts: options.shortcuts }), { flag: 'wx' });
+    oldExecutable: await realpath(options.executable), oldPid: process.pid, shortcuts: options.shortcuts }), { flag: 'wx' });
   await new Promise<void>((resolve, reject) => execFile(powershell(), ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', options.helper, '-Mode', 'Prepare', '-Config', config],
     { windowsHide: true, timeout: 180000, maxBuffer: 64000 }, error => error ? reject(Error('update extraction failed')) : resolve()));
   return config;

@@ -33,7 +33,7 @@ test('native updater rejects path traversal, embedded chat data and mismatched p
 
 test('native update launcher starts an owned fixture, updates its shortcut, and rolls back on a failed start', { skip: process.platform !== 'win32' }, async t => {
   for (const fail of [false, true]) {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'chatbubble-launch-')); t.after(() => fs.rm(root, { recursive: true, force: true }));
+    const root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), 'chatbubble-launch-'))); t.after(() => fs.rm(root, { recursive: true, force: true }));
     await run(powershell, ['-NoProfile', '-NonInteractive', '-File', path.resolve(__dirname, '../scripts/update-launch-fixture.ps1'), '-Root', root, ...(fail ? ['-Fail'] : [])], { windowsHide: true, timeout: 30000 });
     const old = path.join(root, 'ChatBubble-0.14.0-win32-x64'), next = path.join(root, 'ChatBubble-0.15.0-win32-x64'), config = path.join(root, 'install.json');
     await fs.writeFile(config, JSON.stringify({ version: '0.15.0', sha256: '0'.repeat(64), oldExecutable: path.join(old, 'ChatBubble.exe'), oldPid: 99999999, shortcuts: [path.join(root, 'ChatBubble.lnk')] }));

@@ -62,7 +62,7 @@ test('storage migration preserves archives, serializes concurrent saves and surv
   assert.equal(JSON.parse(await readFile(path.join(base, 'state.json'))).session.draft, '旧草稿');
   assert.equal(JSON.parse(await readFile(path.join(target, 'state.json'))).session.draft, '切换期间的新草稿');
   assert.equal((await storage.readArchive(id)).draft, '旧草稿');
-  const reopened = await ChatStorage.open(base); assert.equal(reopened.directory, target);
+  const reopened = await ChatStorage.open(base); assert.equal(reopened.directory, await require('node:fs/promises').realpath(target));
   assert.equal((await reopened.load()).value.session.draft, '切换期间的新草稿');
   assert.equal((await reopened.list()).items[0].id, id);
   assert.ok((await readdir(base)).includes('sessions'));

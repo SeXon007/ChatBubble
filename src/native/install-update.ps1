@@ -73,7 +73,10 @@ $changed = @()
 try {
   # Do not kill a process. Launch only after the app's normal save-and-exit path.
   $process = Get-Process -Id $job.oldPid -ErrorAction SilentlyContinue
-  if ($process) { Wait-Process -Id $job.oldPid -Timeout 120 -ErrorAction Stop }
+  if ($process) {
+    try { Wait-Process -Id $job.oldPid -Timeout 120 -ErrorAction Stop }
+    catch { if (Get-Process -Id $job.oldPid -ErrorAction SilentlyContinue) { throw } }
+  }
   $shell = New-Object -ComObject WScript.Shell
   foreach ($file in $job.shortcuts) {
     if (![IO.Path]::IsPathRooted($file) -or [IO.Path]::GetExtension($file) -ne '.lnk' -or !(Test-Path -LiteralPath $file -PathType Leaf)) { continue }
