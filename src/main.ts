@@ -23,6 +23,7 @@ import { apiPresets, listApiModels } from './api-models';
 import { captureCapability } from './api-capabilities';
 import { apiDesktopClient, desktopClientName, locateDesktopClient, clientNotFound, localApiHistoryNotice } from './desktop-client';
 import { Updates, prepareUpdate, launchUpdate } from './updates';
+import { updateFetch } from './update-fetch';
 
 let window: BrowserWindow;
 let tray: Tray;
@@ -68,7 +69,7 @@ let settingsFlush: Promise<boolean> | undefined;
 const fetcher: typeof fetch = (input, init) => net.fetch(input as string, init);
 let pendingUpdateLaunch: string | undefined;
 const updateHelper = path.join(__dirname, 'native/install-update.ps1');
-const updates = new Updates({ version: app.getVersion(), cache: path.join(app.getPath('userData'), 'updates'), fetcher,
+const updates = new Updates({ version: app.getVersion(), cache: path.join(app.getPath('userData'), 'updates'), fetcher: updateFetch,
   changed: () => { if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('app:update:state', updates.state); },
   prepare: (candidate, zip, folder) => {
     const parent = path.dirname(path.dirname(process.execPath));

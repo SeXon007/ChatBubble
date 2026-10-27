@@ -1,6 +1,6 @@
 {
   "name": "chat-bubble",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "private": true,
   "description": "Windows transparent desktop chat shell",
   "main": "dist/main.js",

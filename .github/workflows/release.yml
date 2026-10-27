@@ -22,6 +22,8 @@ jobs:
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
           if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag/version mismatch' }
       - run: npm run package
+      - name: Verify Electron redirect/download transport
+        run: node scripts/run-electron-check.cjs scripts/check-update-transport.cjs
       - name: Create clean portable ZIP and checksum
         shell: pwsh
         run: |

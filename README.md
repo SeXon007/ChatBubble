@@ -1,10 +1,10 @@
 # Chat Bubble
 
-Windows 透明悬浮聊天应用，当前公开测试版本为 0.14.1。史莱姆可拖动贴边、点击展开、点击外部缩回。紧凑单条输入框提供手动截图键，Codex CLI 支持原生图片消息及外部新消息同步；保留自动保存、原生会话、重启续聊、流式聊天、停止/重试、托盘和草稿恢复。
+Windows 透明悬浮聊天应用，当前公开测试版本为 0.14.2。史莱姆可拖动贴边、点击展开、点击外部缩回。紧凑单条输入框提供手动截图键，Codex CLI 支持原生图片消息及外部新消息同步；保留自动保存、原生会话、重启续聊、流式聊天、停止/重试、托盘和草稿恢复。
 
 ## 直接运行
 
-先从托盘退出旧版，再打开 release/ChatBubble-0.14.1-win32-x64/ChatBubble.exe，或双击项目根目录的“启动 ChatBubble.lnk”。便携包需要保留整个文件夹，不需要 Node.js。旧包与已配置的聊天目录保留。0.13.x旧版本没有更新模块，首次需手动运行0.14.1；之后可在设置→版本内更新。它是未签名的 Windows x64 便携测试版本。首次下载请前往[GitHub Releases](https://github.com/SeXon007/ChatBubble/releases)，下载完整ZIP并解压，运行其中的ChatBubble.exe。源码构建的输出位于release目录；已配置的快捷方式可继续使用。
+先从托盘退出旧版，再打开 release/ChatBubble-0.14.2-win32-x64/ChatBubble.exe，或双击项目根目录的“启动 ChatBubble.lnk”。便携包需要保留整个文件夹，不需要 Node.js。旧包与已配置的聊天目录保留。0.13.x没有更新模块，0.14.1存在内置下载问题，首次均需手动运行0.14.2；之后可在设置→版本内更新。它是未签名的 Windows x64 便携测试版本。首次下载请前往[GitHub Releases](https://github.com/SeXon007/ChatBubble/releases)，下载完整ZIP并解压，运行其中的ChatBubble.exe。源码构建的输出位于release目录；已配置的快捷方式可继续使用。
 
 首次使用：右键系统托盘图标 → 设置，选择 API / Codex CLI；Claude CLI 已移除。API 服务商提供 DeepSeek、Kimi、智谱 GLM 和自定义；选择预设会填入官方地址，填写并保存对应 API Key 后可从模型下拉选择。DeepSeek/Kimi 尝试读取服务模型目录，读取失败时保留少量常用候选；智谱当前提供官方常用候选，候选不等于账户权限已验证。模型仍可手动填写，自定义地址需支持 Chat Completions 的 SSE 流式协议，也可填写完整 `/chat/completions` 地址。模型目录读取只请求元数据，“检查连接”才发送测试消息。
 
