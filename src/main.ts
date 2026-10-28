@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, net, screen, shell, Tray } from 'electron';
+import { app, BrowserWindow, clipboard, ClipboardItem, dialog, ipcMain, Menu, nativeImage, net, screen, shell, Tray } from 'electron';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { writeFile } from 'node:fs/promises';
@@ -181,6 +181,13 @@ async function requestScreenCapture(): Promise<{ ok: boolean; error: string }> {
   if (configuring || closing || chat.busy || screenCapture.status === 'capturing') return { ok: false, error: '请等待当前操作完成。' };
   try {
     const result = await screenCapture.request();
+    if (result.image && screenCapture.status === 'ready') {
+      try {
+        const image = nativeImage.createFromPath(result.image.file);
+        if (image.isEmpty()) throw new Error('Invalid capture image');
+        await clipboard.write([new ClipboardItem({ 'image/png': new Blob([new Uint8Array(image.toPNG())], { type: 'image/png' }) })]);
+      } catch { return { ok: true, error: '截图已保存并附上，但未能复制到剪贴板，请重新截图。' }; }
+    }
     return { ok: !!result.image, error: result.error ? '未能读取画面' : '' };
   } catch { screenCapture.clear(); return { ok: false, error: '未能读取画面' }; }
 }

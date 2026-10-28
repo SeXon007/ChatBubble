@@ -195,7 +195,7 @@
       $('history').textContent = '查看'; $('archive-status').textContent = '';
       if ($<HTMLDialogElement>('history-dialog').open) void refreshArchives().catch(() => { $('archive-status').textContent = '历史记录读取失败。'; });
     }
-    if (!draft) draft = { ...state.settings, provider: state.settings.provider || 'api' };
+    if (!draft) draft = { messageHeight: 380, ...state.settings, provider: state.settings.provider || 'api' };
     for (const [field, value] of Object.entries(state.settings)) if (!dirty.has(field)) Object.assign(draft, { [field]: value });
     render();
     if (!loading) autoApiModels();
@@ -417,7 +417,7 @@
     if (models.status === 'fulfilled') catalog = models.value;
     if (cli.status === 'fulfilled') candidates = cli.value;
     if (services.status === 'fulfilled') apiServices = services.value;
-    saved = state.value; draft = { ...saved.settings, provider: saved.settings.provider || 'api' };
+    saved = state.value; draft = { messageHeight: 380, ...saved.settings, provider: saved.settings.provider || 'api' };
     manual = !!draft.cliModel && !catalog.models.some(m => m.id === draft.cliModel);
     loading = false; render(); autoApiModels();
   })().catch(() => { status('无法读取设置，请重新打开。', true); });

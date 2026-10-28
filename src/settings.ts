@@ -6,7 +6,7 @@ import { readModelCatalog, reasoningEfforts } from './cli-models';
 import { petFields, validPetField, type PetOptions } from './pet-state';
 import { apiReasoningParameters } from './api-capabilities';
 
-const fields = ['provider', 'cliPath', 'cliModel', 'reasoningEffort', 'apiReasoningEffort', 'baseUrl', 'model', 'fontSize', 'lightText', 'textColor', 'textShadow', 'screenCaptureEnabled', 'captureScope', ...petFields] as const;
+const fields = ['provider', 'cliPath', 'cliModel', 'reasoningEffort', 'apiReasoningEffort', 'baseUrl', 'model', 'fontSize', 'messageHeight', 'lightText', 'textColor', 'textShadow', 'screenCaptureEnabled', 'captureScope', ...petFields] as const;
 export type SettingsField = typeof fields[number];
 export type SettingsPatch = Partial<Pick<Settings, SettingsField>>;
 
@@ -28,6 +28,8 @@ export function mergeSettings(current: Settings, raw: unknown): Settings {
       if (!['api', 'codex-cli'].includes(value as string)) throw new Error('请选择 Codex CLI 或 API 服务。');
     } else if (key === 'fontSize') {
       if (![12, 14, 16, 18, 20].includes(value as number)) throw new Error('字号不正确。');
+    } else if (key === 'messageHeight') {
+      if (typeof value !== 'number' || !Number.isInteger(value) || value < 120 || value > 800) throw new Error('消息区高度应为 120–800px 的整数。');
     } else if (key === 'lightText' || key === 'textShadow' || key === 'screenCaptureEnabled') {
       if (typeof value !== 'boolean') throw new Error('显示设置不正确。');
     } else if (typeof value !== 'string' || /[\r\n\0]/.test(value) || value.length > (key === 'cliPath' || key === 'baseUrl' ? 4096 : 200)) throw new Error('设置内容不正确。');

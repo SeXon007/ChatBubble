@@ -13,6 +13,7 @@ app.whenReady().then(async () => {
   await fsp.mkdir(output, { recursive: true });
   const { initialState } = require(path.join(runtime, 'model')), state = initialState();
   Object.assign(state.settings, { provider: 'codex-cli' }); state.session.source = 'codex-cli';
+  delete state.settings.messageHeight;
   const checks = [], layouts = [], errors = [], requests = [], windows = [];
   const check = (name, value) => { assert.ok(value, name); checks.push(name); };
   function HiddenWindow(options) {
@@ -36,7 +37,9 @@ app.whenReady().then(async () => {
   const publicState = () => ({ ...state, busy: false, hasKey: false, warning: '', capture: { available: true, status: 'empty' }, storage: { directory: 'fixture', archiveDirectory: 'fixture', appDirectory: 'fixture' } });
   ipcMain.handle('chat:state', publicState); ipcMain.handle('cli:discover', () => []); ipcMain.handle('cli:models', () => ({ models: [], source: '', fetchedAt: '' }));
   ipcMain.handle('api:presets', () => require(path.join(runtime, 'api-models')).apiPresets);
-  ipcMain.handle('settings:save', async (_event, patch) => { Object.assign(state.settings, patch); return { ok: true, error: '' }; });
+  const { ChatStorage } = require(path.join(runtime, 'chat-storage')), { persistSettingsPatch } = require(path.join(runtime, 'settings'));
+  const store = await ChatStorage.open(path.join(app.getPath('userData'), 'fixture-data'));
+  ipcMain.handle('settings:save', async (_event, patch) => { await persistSettingsPatch(state, patch, () => store.save(state)); return { ok: true, error: '' }; });
   ipcMain.handle('app:version', () => ({ version, updateSourceConfigured: false }));
   ipcMain.handle('app:update:state', () => ({ phase: 'idle', message: '点击“检查更新”读取 GitHub 最新版本。' }));
   const js = code => context.settingsWindow.webContents.executeJavaScript(code);
@@ -46,6 +49,14 @@ app.whenReady().then(async () => {
   async function tab(id) { await js(`document.querySelector('#tab-${id}').click()`); await pause(220); }
   function enlarge() { const win = context.settingsWindow; win.emit('will-resize', {}, { width: 1000, height: 600 }); win.setContentSize(1000, 600); }
   await open(); check('new settings uses 420px default content width', context.settingsWindow.getContentSize()[0] === 420);
+  await tab('chat-options');
+  check('legacy missing message height shows 380px', await js("document.querySelector('#messageHeight').value==='380'&&document.querySelector('[data-value=messageHeight]').value==='380px'"));
+  await js("(()=>{const node=document.querySelector('#messageHeight');node.value='120';node.dispatchEvent(new Event('input'));node.value='800';node.dispatchEvent(new Event('input'));node.dispatchEvent(new Event('change'));})()");
+  await until(()=>state.settings.messageHeight===800,'height saved');
+  await js('window.flushSettings()');
+  check('latest slider edit persists through production settings and storage', (await store.load()).value.settings.messageHeight === 800);
+  await close(); await open(); await tab('chat-options');
+  check('settings reopening restores message-height slider and value', await js("document.querySelector('#messageHeight').value==='800'&&document.querySelector('[data-value=messageHeight]').value==='800px'"));
   enlarge(); await pause(150); check('manual resize remains usable on current tab', context.settingsWindow.getContentSize()[0] === 1000);
   await close(); await open();
   check('closing and reopening discards the previous large size', context.settingsWindow.getContentSize()[0] === 420);

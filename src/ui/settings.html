@@ -26,6 +26,7 @@
   <div class="row" id="api-effort-row" hidden><label for="apiReasoningEffort">思考强度</label><select id="apiReasoningEffort" data-field="apiReasoningEffort" data-edit><option value="">模型默认</option></select></div>
 </section>
 <section class="fields" id="chat-options" role="tabpanel" aria-labelledby="tab-chat-options" hidden>
+  <div class="row"><label for="messageHeight">消息区高度</label><div class="range"><input id="messageHeight" type="range" min="120" max="800" step="20" value="380" title="聊天消息区域的最大高度，实际显示受屏幕可用空间限制" data-field="messageHeight" data-edit><output data-value="messageHeight" data-unit="px"></output></div></div>
   <div class="row"><label for="captureScope">截图范围</label><select id="captureScope" data-field="captureScope" data-edit><option value="window">前台窗口</option><option value="screen">整个屏幕</option></select></div>
   <div class="row"><label for="storage-directory">存储位置</label><div class="combo"><input id="storage-directory" readonly aria-label="存储位置，双击打开文件夹"><button type="button" id="choose-storage" data-edit>选择</button></div></div>
   <div class="row"><label for="history">历史对话</label><button type="button" id="history" class="history-button">查看</button></div>

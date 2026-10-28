@@ -3,7 +3,7 @@
     // Shared silhouette and spring timing from the user-approved prototype.
     // This adapter owns desktop coordinates and animation only; renderer.ts owns real chat and drafts.
     const host = window.desktop;
-    let stage = await host.getDesktopScene(), areas = [], composerHeight = 42, lastRegions = '', lastRegionRects = [];
+    let stage = await host.getDesktopScene(), areas = [], composerHeight = 42, messageHeight = 380, lastRegions = '', lastRegionRects = [];
     const optionKeys = { enabled: 'petEnabled', distance: 'petDistance', size: 'petSize', eyeSize: 'petEyeSize', motion: 'petMotion', gaze: 'petGaze', life: 'petLife', width: 'petWidth', color: 'petColor', viscosity: 'petViscosity' };
     const root = document.getElementById('cb-pet-inline'), $ = id => root.querySelector('#' + id);
     const screen = $('cb-desktop'), pet = $('cb-pet'), chat = $('chat'), form = $('composer');
@@ -484,7 +484,7 @@
     resize();
     renderSettings();
     window.pet = {
-        configure(settings) { let changed = false; for (const [key, field] of Object.entries(optionKeys)) {
+        configure(settings) { messageHeight = Number.isInteger(settings.messageHeight) ? clamp(settings.messageHeight, 120, 800) : 380; let changed = false; for (const [key, field] of Object.entries(optionKeys)) {
             if (settings[field] !== undefined && settings[field] !== config[key]) {
                 config[key] = settings[field];
                 changed = true;
@@ -738,7 +738,7 @@
         chat.style.left = box.x + 'px';
         chat.style.bottom = (H - box.y + 14) + 'px';
         chat.style.pointerEvents = S.wantsOpen ? 'auto' : 'none';
-        $('messages').style.maxHeight = Math.max(26, Math.min(380, box.y - area.y - 22 - ($('status').hidden ? 0 : $('status').offsetHeight + 8) - ($('retry').hidden ? 0 : $('retry').offsetHeight + 4))) + 'px';
+        $('messages').style.maxHeight = Math.max(26, Math.min(messageHeight, box.y - area.y - 22 - ($('status').hidden ? 0 : $('status').offsetHeight + 8) - ($('retry').hidden ? 0 : $('retry').offsetHeight + 4))) + 'px';
         if (S.focusPending && S.wantsOpen && ui > .97) {
             S.focusPending = false;
             $('input').focus({ preventScroll: true });

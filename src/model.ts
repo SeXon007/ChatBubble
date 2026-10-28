@@ -23,6 +23,7 @@ export interface Settings extends Partial<PetOptions> {
   baseUrl: string;
   model: string;
   fontSize: number;
+  messageHeight?: number;
   lightText: boolean;
   textColor?: string;
   textShadow: boolean;
@@ -43,7 +44,7 @@ export function newSession(source?: string): Session {
   return { id: crypto.randomUUID(), createdAt: new Date().toISOString(), draft: '', messages: [], ...(source ? { source } : {}) };
 }
 export function initialState(): SavedState {
-  return { version: 1, session: newSession(), settings: { provider: 'api', cliPath: '', cliModel: '', baseUrl: '', model: '', fontSize: 14, lightText: false, textShadow: false, screenCaptureEnabled: false, captureScope: 'window', ...petDefaults } };
+  return { version: 1, session: newSession(), settings: { provider: 'api', cliPath: '', cliModel: '', baseUrl: '', model: '', fontSize: 14, messageHeight: 380, lightText: false, textShadow: false, screenCaptureEnabled: false, captureScope: 'window', ...petDefaults } };
 }
 export function isState(value: unknown): value is SavedState {
   if (!value || typeof value !== 'object') return false;
@@ -73,6 +74,7 @@ export function isState(value: unknown): value is SavedState {
     (s.settings.apiReasoningEffort === undefined || ['', 'none', 'low', 'high', 'max'].includes(s.settings.apiReasoningEffort)) &&
     (s.settings.screenCaptureEnabled === undefined || typeof s.settings.screenCaptureEnabled === 'boolean') &&
     (s.settings.captureScope === undefined || ['window', 'screen'].includes(s.settings.captureScope)) &&
+    (s.settings.messageHeight === undefined || (Number.isInteger(s.settings.messageHeight) && s.settings.messageHeight >= 120 && s.settings.messageHeight <= 800)) &&
     (s.settings.textColor === undefined || (typeof s.settings.textColor === 'string' && /^#[0-9a-f]{6}$/i.test(s.settings.textColor))) &&
     petFields.every(key => s.settings[key] === undefined || validPetField(key, s.settings[key])) &&
     (s.petPosition === undefined || isPetPosition(s.petPosition)) &&

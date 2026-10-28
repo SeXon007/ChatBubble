@@ -1,6 +1,6 @@
 // Production DOM, preload, capture queue and chat controller with isolated data.
 // No user windows are captured; the capture callback returns a synthetic PNG.
-const {app,BrowserWindow,ipcMain,nativeTheme,nativeImage,net}=require('electron');
+const {app,BrowserWindow,ipcMain,nativeTheme,nativeImage,ClipboardItem,net}=require('electron');
 const fs=require('node:fs/promises'),syncFs=require('node:fs'),path=require('node:path'),os=require('node:os'),vm=require('node:vm'),ts=require('typescript'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),packaged=process.argv.includes('--packaged'),version=require('../package.json').version;
 const runtime=path.join(root,packaged?`release/ChatBubble-${version}-win32-x64/resources/app/dist`:'dist');
@@ -19,7 +19,7 @@ app.whenReady().then(async()=>{
  const state=initialState();Object.assign(state.settings,petDefaults,{provider:'codex-cli',cliPath:'fixture',screenCaptureEnabled:false,petWidth:320,petSize:82,petEyeSize:140,petColor:'#000000'});
  if(apiMode)Object.assign(state.settings,{provider:'api',baseUrl:'https://api.deepseek.com',model:'deepseek-flash'});
  state.session.source=require(path.join(runtime,'conversation-source')).conversationSource(state.settings);
- const checks=[],errors=[],samples=[],shapes=[],modelRequests=[];let captureCalls=0,hold=false,release,fail=false,chat,manager;
+ const checks=[],errors=[],samples=[],shapes=[],modelRequests=[],clipboardImages=[];let captureCalls=0,hold=false,release,fail=false,chat,manager;
  const win=new BrowserWindow({width:800,height:500,show:false,focusable:false,frame:false,transparent:true,webPreferences:{preload:path.join(runtime,'preload.js'),sandbox:true,contextIsolation:true,offscreen:true,backgroundThrottling:false}});
  win.webContents.on('console-message',(_event,level,message)=>{if(level===3)errors.push(message);});
  const snapshot=()=>({session:state.session,settings:state.settings,busy:chat.busy,hasKey:false,warning:'',capture:{...captureCapability(state.settings),status:manager.status},storage:{directory:store.directory,archiveDirectory:store.archiveDirectory,appDirectory:directory}});
@@ -34,7 +34,7 @@ app.whenReady().then(async()=>{
   options.onChunk('合成回复');},()=>manager.take());
  await chat.persist();
  const source=ts.createSourceFile('main.js',await fs.readFile(path.join(runtime,'main.js'),'utf8'),ts.ScriptTarget.ES2022,true);
- const context={mode:'collapsed',modeApplied:false,state,chat,screenCapture:manager,api_capabilities_1:{captureCapability},smoke:false,restartMode:undefined,historyRefresh:undefined,configuring:false,closing:false,
+ const context={Blob,Uint8Array,mode:'collapsed',modeApplied:false,state,chat,screenCapture:manager,api_capabilities_1:{captureCapability},electron_1:{nativeImage,ClipboardItem,clipboard:{write:async items=>{const blob=await items[0].getType('image/png');clipboardImages.push(nativeImage.createFromBuffer(Buffer.from(await blob.arrayBuffer())).toBitmap());}}},smoke:false,restartMode:undefined,historyRefresh:undefined,configuring:false,closing:false,
   expandedBounds:{x:0,y:0,width:800,height:500},nativeShape:'',inputRegions:[],nativePaintRegions:[],petDragging:false,
   window:{setFocusable:()=>{},isVisible:()=>true,show:()=>{},focus:()=>{},hide:()=>{},showInactive:()=>{},webContents:win.webContents,setShape:regions=>{shapes.push(regions);win.setShape(regions);}}};
  vm.createContext(context);
@@ -72,6 +72,8 @@ app.whenReady().then(async()=>{
  await captureButton();await until(()=>manager.status==='ready','manual capture ready');
  const first=(await fs.readdir(path.join(store.directory,'attachments')))[0];
  check(captureCalls===1,'manual button captures exactly once');
+ await until(()=>clipboardImages.length===1,'image copied after capture');
+ check(clipboardImages[0].equals(nativeImage.createFromBuffer(png).toBitmap()),'clipboard receives the captured image pixels, not a path');
  await mode('collapsed');await mode('expanded');check(manager.status==='ready'&&captureCalls===1,'draft screenshot survives close/open without recapture');
  await captureButton();await pause(70);
  const menu=await js("(()=>{const m=document.querySelector('#capture-menu'),b=m.getBoundingClientRect();return {hidden:m.hidden,text:m.textContent,rect:{x:b.x,y:b.y,width:b.width,height:b.height},buttons:[...m.querySelectorAll('button')].map(b=>({name:b.getAttribute('aria-label'),title:b.title}))}})()");
@@ -122,6 +124,22 @@ app.whenReady().then(async()=>{
   await fs.writeFile(path.join(output,`${packaged?'packaged-':''}manual-${theme}-${width}.png`),(await win.webContents.capturePage()).toPNG());
  }
  check(!(await fs.readFile(path.join(runtime,'ui/settings.html'),'utf8')).includes('id="screenCaptureEnabled"'),'obsolete automatic-capture setting removed');
+ // Long messages prove this changes the visible message region, leaving the input strip alone.
+ state.session=newSession('codex-cli');state.session.messages=[{id:'height-fixture',role:'assistant',status:'complete',requestId:'height',time:'',content:'这是消息区高度与滚动检查。\n'.repeat(120)}];
+ const beforeHeightCapture=captureCalls;
+ for(const [width,height,y,requested] of [[800,1100,960,120],[800,1100,960,800],[800,1100,960,380],[360,500,380,800],[320,500,380,120],[800,500,180,800]]){
+  win.setContentSize(width,height);Object.assign(context.expandedBounds,{width,height});const next=scene();next.position.y=y;win.webContents.send('desktop:scene',next);
+  state.settings.messageHeight=requested;broadcast();await pause(250);
+  const layout=await js("(()=>{const m=document.querySelector('#messages'),r=m.getBoundingClientRect(),c=document.querySelector('#composer').getBoundingClientRect();m.scrollTop=50;return {top:r.top,bottom:r.bottom,height:r.height,max:parseFloat(m.style.maxHeight),scrolls:m.scrollTop>0,input:document.querySelector('#input').getBoundingClientRect().height,composer:c.height,composerTop:c.top}})()");
+  check(layout.max<=requested&&layout.height===layout.max&&layout.scrolls&&layout.top>=0&&layout.bottom<layout.composerTop&&layout.composer===42&&layout.input===24,'message height '+requested+' fits '+width+'x'+height+' without resizing composer');
+  if(height===1100)check(layout.height===requested,'unclipped message region reaches '+requested+'px');
+  check(context.inputRegions.some(r=>r.y<=layout.top+2&&r.y+r.height>=layout.bottom-2),'resized message region stays in native mouse hit regions');
+  samples.push({kind:'message-height',width,height,requested,...layout});
+  await js("document.body.style.background='#fff'");
+  await fs.writeFile(path.join(output,`${packaged?'packaged-':''}height-${width}-${height}-${requested}.png`),(await win.webContents.capturePage()).toPNG());
+  await js("document.body.style.background='transparent'");
+ }
+ check(captureCalls===beforeHeightCapture,'height changes never trigger capture');
  check(errors.length===0,'no renderer errors');
  await manager.close();
  const report={packaged,apiMode,version,checks,samples,captureCalls,generatedFixtureRequests:modelRequests.length,loopbackRequests:wireRequests.length,errors,limitations:['Synthetic PNG capture callback and local model fixture only','DOM pointer event replay, not physical desktop FPS measurement','Native setShape and production hit-region reporting exercised']};
