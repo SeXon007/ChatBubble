@@ -4,7 +4,7 @@ const { app, clipboard, ClipboardItem, nativeImage } = require('electron');
 const fs = require('node:fs/promises'), path = require('node:path'), vm = require('node:vm'), ts = require('typescript'), assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..'), version = require('../package.json').version, packaged = process.argv.includes('--packaged');
 const runtime = path.join(root, packaged ? `release/ChatBubble-${version}-win32-x64/resources/app/dist` : 'dist');
-const output = path.join(root, 'docs/verification/chat-optimizations-0.15.0');
+const output = process.env.CHATBUBBLE_CLIPBOARD_OUTPUT || path.join(root, `docs/verification/chat-optimizations-${version}`);
 app.whenReady().then(async () => {
   await fs.mkdir(output, { recursive: true });
   const { initialState } = require(path.join(runtime, 'model')), { ScreenCapture } = require(path.join(runtime, 'screen-capture'));

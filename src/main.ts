@@ -98,6 +98,9 @@ function scheduleSave(): void {
   saveTimer = setTimeout(() => { chat.saveSoon(); }, 300);
 }
 function secureWindow(target: BrowserWindow): void {
+  // WDA_EXCLUDEFROMCAPTURE is applied before showing either app window.
+  // Keep the UI visible and focused; the Windows compositor reveals what is behind it.
+  target.setContentProtection(true);
   target.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   target.webContents.on('will-navigate', event => event.preventDefault());
 }
