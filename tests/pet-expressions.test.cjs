@@ -56,10 +56,10 @@ test('settle reaction waits for motion to stop and produces two brief blinks', (
   assert.equal(c.expression(1100,.016,0).blink,1);
 });
 
-test('reduced motion, hidden state and chat expansion suppress added actions; zero-delta redraw stays finite', () => {
-  for(const mode of ['reduce','hidden','expanded']){
+test('hidden state and chat expansion suppress added actions; zero-delta redraw stays finite', () => {
+  for(const mode of ['hidden','expanded']){
     const c=expressionFixture();c.S.face.settlePending=true;
-    if(mode==='reduce')c.reduce=true;else if(mode==='hidden')c.S.hidden=true;else c.S.wantsOpen=true;
+    if(mode==='hidden')c.S.hidden=true;else c.S.wantsOpen=true;
     const face=c.expression(19000,0,0);
     assert.equal(face.curious,0);assert.equal(face.tilt,0);assert.equal(c.S.face.action,'');assert.equal(c.S.face.settlePending,false);
     for(const v of Object.values(face))assert.ok(Number.isFinite(v));

@@ -21,9 +21,9 @@
     const S = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0, side: null, shapeSide: 'right', blocked: null, blend: 0, contact: 0, press: 0, flow: null, mode: 'idle', candidate: null, drag: null, demo: null, pull: 0, hidden: false, hover: false, seen: false, pointerSeen: false, lookX: 0, lookY: 0, gazeX: 0, gazeY: 0, gazeVX: 0, gazeVY: 0, wantsOpen: false, morph: 0, morphV: 0, impulse: 0, phase: 0, focusPending: false, returnFocus: false, sendPulse: 0, origin: null };
     S.face = { kind: 'idle', action: '', drag: 0, land: 0, rest: 0, lastActive: performance.now(), blinkAt: performance.now() + 4200, blinkCount: 0, dragAt: -Infinity, settleAt: -Infinity, settlePending: false, curiousArmed: false, peekStarted: -Infinity, lastPeekAt: -Infinity, peekCount: 0, peekDirection: 1 };
     let W = 0, H = 0, scale = .68, last = performance.now(), lastStatus = '', restored = null;
-    const media = matchMedia('(prefers-reduced-motion: reduce)');
-    let reduce = media.matches;
-    media.addEventListener('change', e => reduce = e.matches);
+    // Pet motion is part of the interaction: keep the approved spring behavior
+    // consistent across computers, independently of Windows animation preferences.
+    const reduce = false;
     const darkMedia = matchMedia('(prefers-color-scheme: dark)');
     let dark = darkMedia.matches;
     darkMedia.addEventListener('change', e => dark = e.matches);

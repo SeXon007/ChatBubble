@@ -16,3 +16,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Verify pet motion with both Windows animation preferences
+        run: node scripts/run-electron-check.cjs scripts/check-pet-motion.cjs
