@@ -10,24 +10,24 @@ Current release: **0.16.1**. **The app interface is currently in Chinese.** This
 
 1. Open [GitHub Releases](https://github.com/SeXon007/ChatBubble/releases/latest) and download `ChatBubble-0.16.1-win32-x64.zip`.
 2. Extract the complete folder. Keep all its files together.
-3. If an older instance is running, right-click its system tray icon and select **退出** (Exit).
+3. If an older instance is running, right-click its system tray icon and select **Exit**.
 4. Run `ChatBubble.exe` from the extracted folder.
 
 This is an unsigned Windows x64 portable test release. You do not need Node.js to run the downloaded app. Codex CLI mode requires Codex CLI to be installed and signed in on that computer; API mode requires your provider's API key. Model access, quotas, and charges depend on your account.
 
-Existing users on 0.14.2 or later can check for updates in **设置 → 版本** (Settings → Version). Versions 0.13.x have no updater, and 0.14.1 has a download issue; update those versions manually. Updates prepare a separate version folder and preserve the previous folder and configured chat storage.
+Existing users on 0.14.2 or later can check for updates in **Settings → Version**. Versions 0.13.x have no updater, and 0.14.1 has a download issue; update those versions manually. Updates prepare a separate version folder and preserve the previous folder and configured chat storage.
 
 ## First-time setup
 
-Right-click the **system tray icon** and select **设置** (Settings). Right-clicking the slime triggers its interactions instead of opening settings.
+Right-click the **system tray icon** and select **Settings**. Right-clicking the slime triggers its interactions instead of opening settings.
 
-| App label | Meaning | What it controls |
-| --- | --- | --- |
-| 连接 | Connection | API or Codex CLI, provider, model, and connection check |
-| 聊天 | Chat | Message area height, screenshot scope, storage, and history |
-| 外观 | Appearance | Text size, color, and shadow |
-| 桌宠 | Desktop pet | Slime appearance and movement parameters |
-| 版本 | Version | Current version and GitHub update controls |
+| Settings tab | What it controls |
+| --- | --- |
+| Connection | API or Codex CLI, provider, model, and connection check |
+| Chat | Message area height, screenshot scope, storage, and history |
+| Appearance | Text size, color, and shadow |
+| Desktop pet | Slime appearance and movement parameters |
+| Version | Current version and GitHub update controls |
 
 For **API** mode, choose DeepSeek, Kimi, Zhipu GLM, or a custom service. A preset fills in the service address. Enter its API key and select or type a model ID. Custom services must support the Chat Completions streaming protocol; a complete `/chat/completions` URL is also accepted. Model suggestions do not guarantee that your account has access. Claude CLI is no longer available.
 
@@ -35,7 +35,7 @@ For **Codex CLI** mode, install the CLI and sign in with `codex login` first. Th
 
 Changes save automatically. Dropdowns and switches save immediately; text saves after a short pause or when focus leaves the field. API keys are encrypted using the existing system-backed credential store and bound to the service address. Switching addresses does not forward the old key to the new service. Only one address-bound key is stored at a time.
 
-**检查连接** (Check connection) sends a short test request without your chat history and may use account quota. Opening settings does not automatically send this test.
+**Check connection** sends a short test request without your chat history and may use account quota. Opening settings does not automatically send this test.
 
 ## Slime and chat controls
 
@@ -46,7 +46,7 @@ Changes save automatically. Dropdowns and switches save immediately; text saves 
 - **Since 0.16.1:** the established soft spring motion remains enabled even when Windows animation effects are disabled. You do not need to change Windows settings. Existing pet parameters are preserved.
 - **Enter:** send. **Shift+Enter:** insert a line break. Input method composition does not submit a message.
 - During a reply, the send button becomes a stop button. An incomplete answer can be retried using its original user message.
-- Click the tray icon to show or hide the companion. The tray menu provides **开始新对话** (New conversation), **设置** (Settings), and **退出** (Exit).
+- Click the tray icon to show or hide the companion. The tray menu provides **New conversation**, **Settings**, and **Exit**.
 
 The message area height is adjustable from 120 to 800 px, with a default of 380 px, subject to screen space. The input bar stays 42 px high and scrolls internally for longer text. Transparent empty areas allow mouse input to pass through to other apps.
 
@@ -54,7 +54,7 @@ The message area height is adjustable from 120 to 800 px, with a default of 380 
 
 The screenshot button next to Send is available with Codex CLI and supported vision API models. **Screenshots are taken only when you click this button.** Opening the chat, dragging the slime, or sending ordinary text does not capture the screen.
 
-In **设置 → 聊天 → 截图范围** (Settings → Chat → Screenshot scope), select **前台窗口** (Foreground window, the default) or **整个屏幕** (Entire screen). Entire screen captures the display containing the cursor, including visible windows and the taskbar; it does not stitch multiple monitors together.
+In **Settings → Chat → Screenshot scope**, select **Foreground window** (the default) or **Entire screen**. Entire screen captures the display containing the cursor, including visible windows and the taskbar; it does not stitch multiple monitors together.
 
 Successful captures are copied to the clipboard and attached to the next message. Click the screenshot button again to retake or detach the image. Detaching does not delete the saved file. A clipboard error leaves the saved attachment available to send. Failed captures do not silently reuse an earlier image. Pending images survive collapsing the chat but are not restored after restarting the app.
 
