@@ -9,7 +9,7 @@ app.whenReady().then(async () => {
   await fs.mkdir(output, { recursive: true });
   const { initialState } = require(path.join(runtime, 'model')), { ScreenCapture } = require(path.join(runtime, 'screen-capture'));
   const directory = await fs.mkdtemp(path.join(output, 'synthetic-capture-'));
-  const png = nativeImage.createFromBitmap(Buffer.from([0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255]), { width: 2, height: 2 }).toPNG();
+  const png = process.env.CHATBUBBLE_TEST_CAPTURE_PNG ? await fs.readFile(process.env.CHATBUBBLE_TEST_CAPTURE_PNG) : nativeImage.createFromBitmap(Buffer.from([0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255]), { width: 2, height: 2 }).toPNG();
   const original = [];
   for (const item of await clipboard.read()) {
     const data = {};
@@ -29,10 +29,11 @@ app.whenReady().then(async () => {
     assert.equal(await clipboard.has('image/png'), true);
     const items = await clipboard.read(), item = items.find(item => item.types.includes('image/png'));
     const copied = Buffer.from(await (await item.getType('image/png')).arrayBuffer());
-    assert.deepEqual(nativeImage.createFromBuffer(copied).getSize(), { width: 2, height: 2 });
+    const size = nativeImage.createFromBuffer(png).getSize();
+    assert.deepEqual(nativeImage.createFromBuffer(copied).getSize(), size);
     assert.deepEqual(nativeImage.createFromBuffer(copied).toBitmap(), nativeImage.createFromBuffer(png).toBitmap());
     assert.equal(manager.status, 'ready');
-    await fs.writeFile(path.join(output, (packaged ? 'packaged-' : 'source-') + 'clipboard.json'), JSON.stringify({ version, packaged, checks: ['production capture succeeds', 'OS clipboard advertises image/png', 'copied dimensions match', 'copied pixels match', 'attachment remains ready'], userClipboardContentsLogged: false }, null, 2));
+    await fs.writeFile(path.join(output, (packaged ? 'packaged-' : 'source-') + 'clipboard.json'), JSON.stringify({ version, packaged, size, checks: ['production capture succeeds', 'OS clipboard advertises image/png', 'copied dimensions match', 'copied pixels match', 'attachment remains ready'], userClipboardContentsLogged: false }, null, 2));
   } finally {
     if (touched) { if (original.length) await clipboard.write(original); else clipboard.clear(); }
     await manager.close();

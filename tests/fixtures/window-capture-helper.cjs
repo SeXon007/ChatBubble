@@ -11,6 +11,7 @@ readline.createInterface({ input: process.stdin }).on('line', line => {
   if (mode === 'hang') return;
   if (mode === 'blank') { emit({ error: 'blank-image' }); return; }
   if (mode === 'exit') { process.exit(0); return; }
+  if (mode === 'oversize') { emit({ image: Buffer.alloc(16_000_001).toString('base64') }); return; }
   const handle = line.split(':')[1];
   emit({ image: Buffer.alloc(100, Number(handle) % 256).toString('base64') });
 });

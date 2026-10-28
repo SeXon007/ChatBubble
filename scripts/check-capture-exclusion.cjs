@@ -30,6 +30,7 @@ app.whenReady().then(async () => {
     const monitor = { ...helper.monitor }; check('frozen monitor matches generated desktop', monitor.handle === before.monitor);
     const baseline = await helper.captureMonitor(monitor), clean = nativeImage.createFromBuffer(baseline);
     const { width: sw, height: sh } = clean.getSize();
+    check('screen capture preserves native monitor dimensions', sw === monitor.width && sh === monitor.height);
     const evidence = async (name, image) => fs.writeFile(path.join(output, prefix + name + '.png'), nativeImage.createFromBuffer(image).crop({ x: Math.floor(sw*.1), y: Math.floor(sh*.15), width: Math.floor(sw*.78), height: Math.floor(sh*.75) }).toPNG());
     const diff = (a, b, rect) => {
       const aa = nativeImage.createFromBuffer(a).toBitmap(), bb = nativeImage.createFromBuffer(b).toBitmap(); let different = 0, count = 0;

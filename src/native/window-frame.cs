@@ -90,9 +90,7 @@ namespace ChatBubbleCapture {
       using(InMemoryRandomAccessStream stream=new InMemoryRandomAccessStream()) {
         BitmapEncoder encoder=Wait(BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId,stream),clock);
         encoder.SetSoftwareBitmap(bitmap);
-        double scale=Math.Min(1.0,1920.0/Math.Max(bitmap.PixelWidth,bitmap.PixelHeight));
-        encoder.BitmapTransform.ScaledWidth=(uint)Math.Max(1,(int)(bitmap.PixelWidth*scale));
-        encoder.BitmapTransform.ScaledHeight=(uint)Math.Max(1,(int)(bitmap.PixelHeight*scale));
+        // Keep the captured pixels intact; PNG stays at the source resolution.
         Wait(encoder.FlushAsync(),clock);
         if(stream.Size<80 || stream.Size>16000000) throw new InvalidOperationException("image-size");
         stream.Seek(0);

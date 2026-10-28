@@ -24,7 +24,7 @@ app.whenReady().then(async()=>{
  win.webContents.on('console-message',(_event,level,message)=>{if(level===3)errors.push(message);});
  const snapshot=()=>({session:state.session,settings:state.settings,busy:chat.busy,hasKey:false,warning:'',capture:{...captureCapability(state.settings),status:manager.status},storage:{directory:store.directory,archiveDirectory:store.archiveDirectory,appDirectory:directory}});
  const broadcast=()=>win.webContents.send('chat:state',snapshot());
- const png=nativeImage.createFromBitmap(Buffer.alloc(32*32*4,255),{width:32,height:32}).toPNG();
+ const png=process.env.CHATBUBBLE_TEST_CAPTURE_PNG ? await fs.readFile(process.env.CHATBUBBLE_TEST_CAPTURE_PNG) : nativeImage.createFromBitmap(Buffer.alloc(32*32*4,255),{width:32,height:32}).toPNG();
  assert.ok(png.length>80,'synthetic capture fixture must be a valid PNG');
  manager=new ScreenCapture(()=>store.directory,async()=>{captureCalls++;if(hold)await new Promise(resolve=>{release=resolve;});if(fail)throw Error('synthetic unavailable');return png;},undefined,broadcast);
  const wireRequests=[];let server;
@@ -90,9 +90,12 @@ app.whenReady().then(async()=>{
  check(modelRequests.length===0&&!(await js("window.desktop.submit('in flight')")).ok,'pending capture blocks both UI and IPC sending');
  hold=false;release();await until(()=>manager.status==='ready','capture completes');await pause(40);
  await captureButton();await js("document.querySelector('#capture-retake').click()");await until(()=>captureCalls===3&&manager.status==='ready','retake completes');
+ await until(()=>js("!document.querySelector('#capture').disabled"),'retake and clipboard copying finished');
+ await until(()=>js("!document.querySelector('#send').disabled&&!document.querySelector('#composer').inert"),'send button ready after capture state render');
  await js("document.querySelector('#input').value='带图问题';document.querySelector('#input').dispatchEvent(new Event('input'));document.querySelector('#send').click()");
  await until(()=>modelRequests.length===1&&!chat.busy,'model fixture receives screenshot');
  check(manager.status==='empty'&&modelRequests[0].image&&state.session.messages[0].image.file===modelRequests[0].image.file,'send consumes and persists the exact captured attachment');
+ check((await fs.readFile(modelRequests[0].image.file)).equals(png),'model receives the unchanged full-resolution PNG file');
  check(await js("!document.querySelector('#messages img')&&document.querySelector('#messages').textContent.includes('带图问题')"),'message log has text only');
  if(apiMode){check(wireRequests.length===1&&Array.isArray(wireRequests[0].messages.at(-1).content),'Electron net.fetch sends multimodal API request to loopback fixture');check(wireRequests[0].messages.at(-1).content[1].image_url.url==='data:image/png;base64,'+png.toString('base64'),'wire contains exact captured PNG bytes');}
  await captureButton();await until(()=>manager.status==='ready','capture before failure');

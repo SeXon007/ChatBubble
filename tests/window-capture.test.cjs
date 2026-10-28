@@ -48,6 +48,11 @@ test('helper process exit is distinct from an unavailable or blank target', asyn
   await assert.rejects(capture.capture(), error => error.code === 'helper-closed');
 });
 
+test('removing resolution scaling does not bypass the 16 MB native-image limit', async t => {
+  const capture = fixture(t, 'oversize');
+  await assert.rejects(capture.capture(), error => error.code === 'image-invalid');
+});
+
 test('cold screen request waits for the initial monitor identity without requiring a window target', async t => {
   const capture = fixture(t, 'delayed');
   const take = capture.prepareCapture('screen');

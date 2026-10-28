@@ -25,8 +25,7 @@ app.whenReady().then(async()=>{
   const colorAt=(x,y)=>{const i=(Math.floor(size.height*y)*size.width+Math.floor(size.width*x))*4;return [bitmap[i+2],bitmap[i+1],bitmap[i]]};
   const near=(a,b)=>a.every((v,i)=>Math.abs(v-b[i])<=5),background=[36,90,114],red=[216,75,64],blue=[66,105,200];
   await fs.writeFile(path.join(output,'pixel-check.json'),JSON.stringify({size,background:colorAt(.05,.05),red:colorAt(.27,.3),blue:colorAt(.75,.65),redWindow:JSON.parse(execFileSync('powershell.exe',['-NoProfile','-NonInteractive','-File',path.join(output,'probe-cover.ps1'),'-Window',info.red],{encoding:'utf8',windowsHide:true}).trim()),blueWindow:JSON.parse(execFileSync('powershell.exe',['-NoProfile','-NonInteractive','-File',path.join(output,'probe-cover.ps1'),'-Window',info.blue],{encoding:'utf8',windowsHide:true}).trim())},null,2));
-  const ratio=Math.min(1,1920/Math.max(selected.width,selected.height));
-  check('screen image covers the complete display aspect and dimensions',size.width===Math.max(1,Math.floor(selected.width*ratio))&&size.height===Math.max(1,Math.floor(selected.height*ratio)));
+  check('screen image preserves the complete native display dimensions',size.width===selected.width&&size.height===selected.height);
   check('screen includes desktop background and bottom-right edge',near(colorAt(.05,.05),background)&&near(colorAt(.95,.95),background));
   check('screen includes both overlapping windows',near(colorAt(.27,.3),red)&&near(colorAt(.75,.65),blue));
   let palette=0;for(let i=0;i<bitmap.length;i+=4){const c=[bitmap[i+2],bitmap[i+1],bitmap[i]];if(near(c,background)||near(c,red)||near(c,blue))palette++}
